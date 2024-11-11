@@ -9,6 +9,14 @@ To Programmatically request data, you will have to send a stringified JSON array
 
 To Programatically receive data, from the microservice, you will have to utilize the zeromq receive method (which is called recv within the python library). In order to work with the received data, it is necessary to convert it from string representation to JSON one. This conversion is performed in the below sample Node.js code, with the JSON.parse method.
 
-const [result] = await sock.receive();
-const data = JSON.parse(result.toString());
-console.log(data);
+    const [result] = await sock.receive();
+    const data = JSON.parse(result.toString());
+    console.log(data);
+
+
+**Mitigation Plan**
+    A. David Skaggs
+    B. This microservice is completed
+    C. NA, the microservice is completed.
+    D. My teammate should access this microservice from this repo on github. They will want to utilize the server.mjs file to get the zeromq 
+
