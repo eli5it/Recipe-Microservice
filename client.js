@@ -11,7 +11,8 @@ async function runClient() {
   const ingredients = JSON.stringify(["chickpea"]);
   await sock.send(ingredients);
   const [result] = await sock.receive();
-  console.log("Received ", result.toString());
+  const data = JSON.parse(result.toString());
+  console.log(data);
 }
 
 runClient();

@@ -96,13 +96,6 @@ const getIngredientsInfo = async (ingredientList) => {
   return ingredientsData;
 };
 
-// console.log(
-//   "looking for ingredient date for following ingredients",
-//   "cheddar, chickpea, chili peppers"
-// );
-// const ingredients = ["cheddar", "chickpea", "chili peppers"];
-// const data = await getIngredientsInfo(ingredients);
-
 async function runServer() {
   const sock = new zmq.Reply();
 
