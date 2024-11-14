@@ -22,20 +22,25 @@ To Programatically receive data, from the microservice, you will have to utilize
     
     C. NA, the microservice is completed.  
     
-    D. My teammate should access this microservice from this repo on github. They will want to utilize the server.mjs file to  
-    get the zeromq server up and running.  
+    D. My teammate should access this microservice from this repo on github. They will 
+       want to utilize the server.mjs file to get the zeromq server up and running.  
     
-    E. If my teammate cannot access my microservice than I can be available to help them. I work 3 days a week for 10  hours a  
-    day, with a rotating schedule. On my work days, I will generally be avaiable after 730PM EST. On my non-work days, I am  
-    avaiable at almost any time. Messaging me on discord is an effective way to get help.  
+    E. If my teammate cannot access my microservice than I can be available to help them. 
+       I work 3 days a week for 10  hours a day, with a rotating schedule. On my work days, 
+       I will generally be avaiable after 730PM EST. On my non-work days, I am  
+       available at almost any time. Messaging me on discord is an effective way to get help.  
     
-    F. I would prefer that my teammate contact me within a week if they are unable to call or acccess this microservice.  
+    F. I would prefer that my teammate contact me within a week if they are unable to call 
+       or acccess this microservice.  
     
-    G. My teammate should be aware that there is a rate limit on the spoonacular API that is utilized by this microservice.  
-    Under the free plan, there are a max of 60 requests in 1 minute, and there is also a daily quota that limits usage to about     150 requests. I'd like my teammate to sign up for their own API account, and fill out their API key info the .env file   
-    provided in this repo. At the time being my teammate shouldn't have to worry much about surpassing quota limits, but if
-    they want to scale up their main program so that it receives large volumes of requests, then it would be necessary to sign
-    up for a paid subscription, or implement caching.
+    G. My teammate should be aware that there is a rate limit on the spoonacular API that 
+       is utilized by this microservice. Under the free plan, there are a max of 60 requests 
+       in 1 minute, and there is also a daily quota that limits usage to about 150 requests. 
+       I'd like my teammate to sign up for their own API account, and fill out their API key 
+       in the .env file provided in this repo. At the time being my teammate shouldn't have 
+       to worry much about surpassing quota limits, but if they want to scale up their main 
+       program so that it receives large volumes of requests, then it would be necessary to sign
+       up for a paid subscription, or implement caching.
     
 
  
