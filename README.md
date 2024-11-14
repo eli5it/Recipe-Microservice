@@ -15,6 +15,8 @@ To Programatically receive data, from the microservice, you will have to utilize
 
 
 **UML Sequence Diagram**
+
+
 <img width="688" alt="image" src="https://github.com/user-attachments/assets/51dba624-fbbc-4344-abe3-b99686cb08f5">
 
 **Mitigation Plan**
