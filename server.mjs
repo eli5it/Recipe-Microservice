@@ -1,36 +1,16 @@
-const API_KEY = "63edd14d00ce4a778d22d40b4bb2f5de";
 import axios from "axios";
 import fs from "fs";
 import zmq from "zeromq";
+import dotenv from "dotenv";
+dotenv.config();
+const API_KEY = process.env.API_KEY;
 const top1000 = JSON.parse(fs.readFileSync("./data.json", "utf8"));
+const cache = JSON.parse(fs.readFileSync("./cache.json", "utf8"));
 
-// const obj = {};
+const getSpoonacularId = async (ingredientName) => {
+  // returns the spoonacularId of a given ingredient
+  // requires ingredient to be in top 1000 most common json file
 
-// const exampleJson = {
-//   ingredient: "Schnozzberries",
-//   nutritional_info: {
-//     calories: 1,
-//     fat: 0,
-//     carbohydrates: 1,
-//     protein: 1,
-//   },
-//   price: {
-//     amount: 0.25,
-//     currency: "USD",
-//   },
-//   image: "https://www.example.com/img.jpg",
-//   substitutions: [
-//     "Snoutfruit",
-//     "Nose Candy",
-//     "WhiffBlooms",
-//     "BreezieBerries",
-//     "SnoutNuts",
-//   ],
-//   dietary_restrictions: ["Vegan", "Gluten-Free", "Dangerous"],
-// };
-
-const getSpoonacularId = (ingredientName) => {
-  // ingredient names in json are lowercased
   const lowerCasedName = ingredientName.toLowerCase();
   const spoonId = top1000[lowerCasedName];
 
@@ -42,40 +22,60 @@ const getSpoonacularId = (ingredientName) => {
       return spoonId;
     }
   }
+
+  const queryString = `https://api.spoonacular.com/food/ingredients/search?query=${ingredientName}&apiKey=${API_KEY}`;
+
+  // use spoonacular API to search for the id of the ingredient
+  const response = await axios.get(queryString);
+  const data = response.data;
+  if (data?.results.length > 0) {
+    return data.results[0].id;
+  }
 };
 
 const getIngredientSubstitutes = async (spoonId) => {
-  const response = await axios.get(
-    `https://api.spoonacular.com/food/ingredients/${spoonId}/substitutes?apiKey=${API_KEY}`
-  );
-  const data = response.data;
-  if (data.status === "failure") {
+  // returns an array of substitutes of an ingredient with provided spoonId
+  try {
+    const response = await axios.get(
+      `https://api.spoonacular.com/food/ingredients/${spoonId}/substitutes?apiKey=${API_KEY}`
+    );
+
+    const data = response.data;
+
+    if (data.status === "failure") {
+      return [];
+    }
+    return data.substitutes;
+  } catch (err) {
     return [];
   }
-  return data.substitutes;
 };
 
 const getIngredientInfo = async (ingredientId, ingredientName) => {
   // first get ingredient id for spoonacular id
-  const response = await axios.get(
-    `https://api.spoonacular.com/food/ingredients/${ingredientId}/information?amount=1&apiKey=${API_KEY}`
-  );
-  const data = response.data;
+  try {
+    const response = await axios.get(
+      `https://api.spoonacular.com/food/ingredients/${ingredientId}/information?amount=1&apiKey=${API_KEY}`
+    );
+    const data = response.data;
 
-  const returnObj = {
-    id: data.id,
-    name: ingredientName,
-    nutrition: data.nutrition,
-    price: {
-      amount: data.estimatedCost.value,
-      unit: data.estimatedCost.unit,
-    },
-    image: `https://img.spoonacular.com/ingredients_100x100/${data.image}`,
-    substitutions: await getIngredientSubstitutes(data.id),
-    success: true,
-  };
+    const returnObj = {
+      id: data.id,
+      name: ingredientName,
+      nutrition: data.nutrition,
+      price: {
+        amount: data.estimatedCost.value,
+        unit: data.estimatedCost.unit,
+      },
+      image: `https://img.spoonacular.com/ingredients_100x100/${data.image}`,
+      substitutions: await getIngredientSubstitutes(data.id),
+      success: true,
+    };
 
-  return returnObj;
+    return returnObj;
+  } catch (err) {
+    return { name: ingredientName, success: false };
+  }
 };
 
 const getIngredientsInfo = async (ingredientList) => {
@@ -85,11 +85,19 @@ const getIngredientsInfo = async (ingredientList) => {
     ingredient,
   }));
 
-  const ingredientsPromise = spoonIds.map(async ({ id, ingredient }) =>
-    id
+  const ingredientsPromise = spoonIds.map(async ({ id, ingredient }) => {
+    if (cache[ingredient]) {
+      return cache[ingredient];
+    }
+
+    let ingredientData = id
       ? getIngredientInfo(id, ingredient)
-      : { name: ingredient, success: false }
-  );
+      : { name: ingredient, success: false };
+
+    cache[ingredient] = ingredientData;
+
+    return ingredientData;
+  });
 
   const ingredientsData = await Promise.all(ingredientsPromise);
 
