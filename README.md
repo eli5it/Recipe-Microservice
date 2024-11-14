@@ -15,8 +15,8 @@ To Programatically receive data, from the microservice, you will have to utilize
 
 
 **Mitigation Plan**
-    A. David Skaggs
-    B. This microservice is completed
+    A. David Skaggs\n
+    B. This microservice is completed\n
     C. NA, the microservice is completed.
     D. My teammate should access this microservice from this repo on github. They will want to utilize the server.mjs file to get the zeromq server up and running.
     E. If my teammate cannot access my microservice than I can be available to help them. I work 3 days a week for 10  hours a day, with a rotating schedule. On my work days, I will generally be avaiable after 730PM EST. On my non-work days, I am avaiable at almost any time. Messaging me on discord is an effective way to get help.
