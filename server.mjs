@@ -10,7 +10,6 @@ const cache = JSON.parse(fs.readFileSync("./cache.json", "utf8"));
 const getSpoonacularId = async (ingredientName) => {
   // returns the spoonacularId of a given ingredient
   // requires ingredient to be in top 1000 most common json file
-
   const lowerCasedName = ingredientName.toLowerCase();
   const spoonId = top1000[lowerCasedName];
 
@@ -54,6 +53,9 @@ const getIngredientSubstitutes = async (spoonId) => {
 const getIngredientInfo = async (ingredientId, ingredientName) => {
   // first get ingredient id for spoonacular id
   try {
+    // Attempting to debug:
+    // console.log("ingredient ID: ", ingredientId);
+    // console.log("ingredient name: ", ingredientName);
     const response = await axios.get(
       `https://api.spoonacular.com/food/ingredients/${ingredientId}/information?amount=1&apiKey=${API_KEY}`
     );
@@ -74,15 +76,19 @@ const getIngredientInfo = async (ingredientId, ingredientName) => {
 
     return returnObj;
   } catch (err) {
+    console.error("Error fetching ingredient info:", err);
     return { name: ingredientName, success: false };
   }
 };
 
 const getIngredientsInfo = async (ingredientList) => {
   // need all spoonacularIds
-  let spoonIds = ingredientList.map((ingredient) => ({
-    id: getSpoonacularId(ingredient),
-    ingredient,
+  let spoonIds = await Promise.all(ingredientList.map(async (ingredient) => {
+    const id = await getSpoonacularId(ingredient);
+    return {
+      id, 
+      ingredient,
+    };
   }));
 
   const ingredientsPromise = spoonIds.map(async ({ id, ingredient }) => {
@@ -91,7 +97,7 @@ const getIngredientsInfo = async (ingredientList) => {
     }
 
     let ingredientData = id
-      ? getIngredientInfo(id, ingredient)
+      ? await getIngredientInfo(id, ingredient)
       : { name: ingredient, success: false };
 
     cache[ingredient] = ingredientData;
