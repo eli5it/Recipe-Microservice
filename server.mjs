@@ -83,6 +83,8 @@ const getIngredientInfo = async (ingredientId, ingredientName) => {
 
 const getIngredientsInfo = async (ingredientList) => {
   // need all spoonacularIds
+  // IDs were resolving as promises. Used Promise.all to handle multiple async calls
+  // This ensures that all IDs are fetched before continuing with the ingredient fetching
   let spoonIds = await Promise.all(ingredientList.map(async (ingredient) => {
     const id = await getSpoonacularId(ingredient);
     return {
@@ -96,6 +98,7 @@ const getIngredientsInfo = async (ingredientList) => {
       return cache[ingredient];
     }
 
+    // Needed an await here as well
     let ingredientData = id
       ? await getIngredientInfo(id, ingredient)
       : { name: ingredient, success: false };
